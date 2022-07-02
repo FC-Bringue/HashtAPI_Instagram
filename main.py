@@ -9,6 +9,7 @@ from instascrape import *
 load_dotenv()
 
 app = flask.Flask(__name__)
+
 if os.getenv("FLASK_ENV") == "development":
     app.config["DEBUG"] = True
 else:
@@ -44,8 +45,4 @@ def hashtag():
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
-
-
-port = int(os.environ.get("PORT", 5000))
-app.run(host='0.0.0.0', port=port)
+    return "<h1>MozeAppHashtagApi</h1><p>AMOGUS.</p>"
