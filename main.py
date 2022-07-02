@@ -62,7 +62,7 @@ def hashtag():
 @app.route('/joebiden', methods=['GET'])
 def joebiden():
     # Scraping Joe Biden's profile
-    SESSIONID = 'ENTER_YOUR_SESSION_ID_HERE'
+    SESSIONID = os.getenv("SESSIONID")
     headers = {"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.57",
                "cookie": f"sessionid={SESSIONID};"}
     joe = Profile("joebiden")
