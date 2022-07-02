@@ -1,6 +1,5 @@
 import json
 import codecs
-import json
 import os
 import ast
 from time import sleep

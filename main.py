@@ -1,5 +1,4 @@
 import os
-from xml.etree.ElementTree import tostring
 from dotenv import load_dotenv
 
 import flask
@@ -7,6 +6,7 @@ from flask import request, jsonify
 
 from scrape_tool import create_scrape_job
 from threading import Thread
+
 load_dotenv()
 
 SCRAPE_LIST = []
