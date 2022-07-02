@@ -102,4 +102,4 @@ def create_scrape_job():
                         json.dump(res, outfile, default=to_json)
                         print('SAVED: ' + scrape)
                 print("Scrape job done")
-        sleep(60)
+        sleep(os.getenv("refresh_data_frequency"))

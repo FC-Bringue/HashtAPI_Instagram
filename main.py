@@ -39,9 +39,6 @@ def register():
     else:
         return "Error: No id field provided. Please specify a bool."
 
-    thread = Thread(target=create_scrape_job)
-    thread.start()
-
     needToScrape = open(os.getenv("need_to_scrape_path") +
                         "/need_to_scrape_"+hashtag, 'w')
     needToScrape.write(bool)
@@ -53,6 +50,8 @@ def register():
                             "/toScrape", 'w')
         needToScrape.write(str(SCRAPE_LIST))
         needToScrape.close()
+        thread = Thread(target=create_scrape_job)
+        thread.start()
         return "Success: Scrape job created for hashtag: " + hashtag
     else:
         SCRAPE_LIST.remove(hashtag)
@@ -60,6 +59,8 @@ def register():
                             "/toScrape", 'w')
         needToScrape.write(str(SCRAPE_LIST))
         needToScrape.close()
+        thread = Thread(target=create_scrape_job)
+        thread.start()
         return "Successfully unregistered scrape job for hashtag: " + hashtag
 
 
