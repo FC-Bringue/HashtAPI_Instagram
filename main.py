@@ -9,7 +9,10 @@ from instascrape import *
 load_dotenv()
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+if os.getenv("FLASK_ENV") == "development":
+    app.config["DEBUG"] = True
+else:
+    app.config["DEBUG"] = False
 
 
 @app.route('/getHashtag', methods=['GET'])
@@ -19,7 +22,7 @@ def hashtag():
     else:
         return "Error: No APIKEY provided. Please specify."
 
-    if api_key != os.getenv('TEST'):
+    if api_key != os.getenv('APIKEY'):
         return "Error: Invalid APIKEY provided."
 
     if 'hashtag' in request.args:
