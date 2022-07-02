@@ -5,13 +5,12 @@ import flask
 from flask import request, jsonify
 
 from instascrape import *
+from selenium import webdriver
 from selenium.webdriver import Chrome
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-chromeOptions = Options()
+chromeOptions = webdriver.ChromeOptions()
 chromeOptions.add_argument("--headless")
-chromeOptions.addArguments("--disable-gpu")
-chromeOptions.addArguments("--no-sandbox")
+chromeOptions.add_argument("--disable-dev-shm-usage")
+chromeOptions.add_argument("--no-sandbox")
 chromeOptions.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 
 webdriver = Chrome(executable_path=os.environ.get(
