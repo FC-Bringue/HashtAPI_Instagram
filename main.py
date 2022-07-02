@@ -42,9 +42,13 @@ def hashtag():
     else:
         return "Error: No id field provided. Please specify an id."
 
+    headers = {
+        'cookie': 'sessionid=' + os.getenv('SESSIONID')
+    }
+
     scrape_hashtag = Hashtag(
         'https://www.instagram.com/explore/tags/' + hashtag + '/')
-    scrape_hashtag.scrape()
+    scrape_hashtag.scrape(headers=headers)
 
     results = []
 
