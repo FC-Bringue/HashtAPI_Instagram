@@ -42,18 +42,13 @@ def hashtag():
     else:
         return "Error: No id field provided. Please specify an id."
 
-    SESSION_ID = os.getenv("SESSIONID")
-
-    headers = {"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.57",
-               "cookie": "sessionid="+SESSION_ID+";"}
-
     scrape_hashtag = Hashtag(
         'https://www.instagram.com/explore/tags/' + hashtag + '/')
-    scrape_hashtag.scrape(headers=headers)
+    scrape_hashtag.scrape()
 
     results = []
 
-    for post in scrape_hashtag.get_recent_posts(20, webdriver=webdriver):
+    for post in scrape_hashtag.get_recent_posts(20):
         results.append(post.display_url)
 
     return jsonify(results)
@@ -61,21 +56,7 @@ def hashtag():
 
 @app.route('/joebiden', methods=['GET'])
 def joebiden():
-    # Scraping Joe Biden's profile
-    SESSIONID = os.getenv("SESSIONID")
-    headers = {"user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.57",
-               "cookie": f"sessionid={SESSIONID};"}
-    joe = Profile("joebiden")
-    joe.scrape(headers=headers)
-
-    # Scraping the posts
-    posts = joe.get_posts(webdriver=webdriver, login_first=True)
-    scraped, unscraped = scrape_posts(
-        posts, silent=False, headers=headers, pause=10)
-
-    print(scraped, unscraped)
-
-    return "<h1>MozeAppHashtagApi</h1><p>AMOGUS.</p>"
+    return "<h1>DECUDETOIJOE</h1><p>AMOGUS.</p>"
 
 
 @app.route('/', methods=['GET'])
