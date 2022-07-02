@@ -8,14 +8,14 @@ from flask import request, jsonify
 from instascrape import *
 from selenium import webdriver
 from selenium.webdriver import Chrome
-chromeOptions = webdriver.ChromeOptions()
-chromeOptions.add_argument("--headless")
-chromeOptions.add_argument("--disable-dev-shm-usage")
-chromeOptions.add_argument("--no-sandbox")
-chromeOptions.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+#chromeOptions = webdriver.ChromeOptions()
+# chromeOptions.add_argument("--headless")
+# chromeOptions.add_argument("--disable-dev-shm-usage")
+# chromeOptions.add_argument("--no-sandbox")
+#chromeOptions.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 
-webdriver = Chrome(executable_path=os.environ.get(
-    "CHROMEDRIVER_PATH"), options=chromeOptions)
+# webdriver = Chrome(executable_path=os.environ.get(
+#    "CHROMEDRIVER_PATH"), options=chromeOptions)
 
 load_dotenv()
 
@@ -43,7 +43,7 @@ def hashtag():
         return "Error: No id field provided. Please specify an id."
 
     headers = {
-        'cookie': 'sessionid=' + os.getenv('SESSIONID')
+        "cookie": os.getenv('SESSIONID')
     }
 
     scrape_hashtag = Hashtag(
