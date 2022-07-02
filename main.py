@@ -47,4 +47,5 @@ def home():
     return "<h1>Distant Reading Archive</h1><p>This site is a prototype API for distant reading of science fiction novels.</p>"
 
 
-app.run()
+port = int(os.environ.get("PORT", 5000))
+app.run(host='0.0.0.0', port=port)
