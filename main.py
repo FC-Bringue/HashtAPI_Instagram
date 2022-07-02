@@ -53,7 +53,7 @@ def hashtag():
 
     results = []
 
-    for post in scrape_hashtag.get_recent_posts(20, webdriver=webdriver):
+    for post in scrape_hashtag.get_recent_posts(20, webdriver=webdriver, headers=headers):
         results.append(post.display_url)
 
     return jsonify(results)
