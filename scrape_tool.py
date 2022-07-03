@@ -6,6 +6,7 @@ import ast
 from time import sleep
 from dotenv import load_dotenv
 from instagram_private_api import Client, ClientError, ClientLoginError, ClientCookieExpiredError, ClientLoginRequiredError
+from postgre import fetchData, getHashtagList, saveData
 
 load_dotenv()
 
@@ -81,25 +82,40 @@ def getApiClient():
 
 def create_scrape_job():
     while True:
-        toScrape = open(os.getenv("need_to_scrape_path") +
-                        "/toScrape", 'r').read().splitlines()
-        toScrape = toScrape[0]
-        print("toScrape: " + toScrape)
-        toScrape = ast.literal_eval(toScrape)
+        if os.getenv("PRJ_ENV") == "development":
+            toScrape = open(os.getenv("need_to_scrape_path") +
+                            "/toScrape", 'r').read().splitlines()
+            toScrape = toScrape[0]
+            print("toScrape: " + toScrape)
+            toScrape = ast.literal_eval(toScrape)
+        else:
+            toScrape = getHashtagList()
+            print("toScrape: " + str(toScrape))
         for scrape in toScrape:
-            needToScrape = open(os.getenv("need_to_scrape_path") +
-                                "/need_to_scrape_"+scrape, 'r')
-            needToScrape = needToScrape.read().splitlines()
-            needToScrape = needToScrape[0]
-            print(needToScrape)
-            if needToScrape == "False":
-                print("No scrape job")
-            if needToScrape == "True":
-                api = getApiClient()
-                res = api.tag_section(scrape, 'recent')
-                if os.getenv("PRJ_ENV") == "development":
+            scrape = scrape[0]
+            if os.getenv("PRJ_ENV") == "development":
+                needToScrape = open(os.getenv("need_to_scrape_path") +
+                                    "/need_to_scrape_"+scrape, 'r')
+                needToScrape = needToScrape.read().splitlines()
+                needToScrape = needToScrape[0]
+                print(needToScrape)
+                if needToScrape == "False":
+                    print("No scrape job")
+                if needToScrape == "True":
+                    api = getApiClient()
+                    res = api.tag_section(scrape, 'recent')
                     with open("res/"+scrape, 'w') as outfile:
                         json.dump(res, outfile, default=to_json)
                         print('SAVED: ' + scrape)
-                print("Scrape job done")
-        sleep(os.getenv("refresh_data_frequency"))
+            else:
+                api = getApiClient()
+                # print(scrape)
+                #print("scrape :" + scrape)
+                #print(type(api.tag_section(scrape, 'recent')))
+                res = api.tag_section(scrape, 'recent')
+                res = json.dumps(res)
+                #print("res: " + str(res))
+                toSave = saveData(res, scrape)
+                #print("toSave :" + str(toSave))
+            print("Scrape job done")
+        sleep(int(os.getenv("refresh_data_frequency")))

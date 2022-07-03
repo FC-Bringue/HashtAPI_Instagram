@@ -6,6 +6,7 @@ import flask
 from flask import request, jsonify
 
 from scrape_tool import create_scrape_job
+from postgre import savehashtagList, getHashtagList, findHashtag, fetchData, removeHashtag
 from threading import Thread
 load_dotenv()
 
@@ -39,29 +40,42 @@ def register():
     else:
         return "Error: No id field provided. Please specify a bool."
 
-    needToScrape = open(os.getenv("need_to_scrape_path") +
-                        "/need_to_scrape_"+hashtag, 'w')
-    needToScrape.write(bool)
-    needToScrape.close()
+    if os.getenv("PRJ_ENV") == "development":
+        needToScrape = open(os.getenv("need_to_scrape_path") +
+                            "/need_to_scrape_"+hashtag, 'w')
+        needToScrape.write(bool)
+        needToScrape.close()
 
-    if bool == "True":
-        SCRAPE_LIST.append(hashtag)
-        needToScrape = open(os.getenv("need_to_scrape_path") +
-                            "/toScrape", 'w')
-        needToScrape.write(str(SCRAPE_LIST))
-        needToScrape.close()
-        thread = Thread(target=create_scrape_job)
-        thread.start()
-        return "Success: Scrape job created for hashtag: " + hashtag
+        if bool == "True":
+            SCRAPE_LIST.append(hashtag)
+            needToScrape = open(os.getenv("need_to_scrape_path") +
+                                "/toScrape", 'w')
+            needToScrape.write(str(SCRAPE_LIST))
+            needToScrape.close()
+            thread = Thread(target=create_scrape_job)
+            thread.start()
+            return "Success: Scrape job created for hashtag: " + hashtag
+        else:
+            SCRAPE_LIST.remove(hashtag)
+            needToScrape = open(os.getenv("need_to_scrape_path") +
+                                "/toScrape", 'w')
+            needToScrape.write(str(SCRAPE_LIST))
+            needToScrape.close()
+            thread = Thread(target=create_scrape_job)
+            thread.start()
+            return "Successfully unregistered scrape job for hashtag: " + hashtag
     else:
-        SCRAPE_LIST.remove(hashtag)
-        needToScrape = open(os.getenv("need_to_scrape_path") +
-                            "/toScrape", 'w')
-        needToScrape.write(str(SCRAPE_LIST))
-        needToScrape.close()
-        thread = Thread(target=create_scrape_job)
-        thread.start()
-        return "Successfully unregistered scrape job for hashtag: " + hashtag
+        hashtagRegitered = findHashtag(hashtag)
+        if hashtagRegitered:
+            removeHashtag(hashtag)
+            thread = Thread(target=create_scrape_job)
+            thread.start()
+            return "Successfully unregistered scrape job for hashtag: " + hashtag
+        else:
+            savehashtagList(hashtag)
+            thread = Thread(target=create_scrape_job)
+            thread.start()
+            return "Successfully registered scrape job for hashtag: " + hashtag
 
 
 @app.route('/getHashtag', methods=['GET'])
@@ -79,11 +93,18 @@ def hashtag():
     else:
         return "Error: No id field provided. Please specify an id."
 
-    results = open("res/"+hashtag, 'r')
-    results = results.read().splitlines()
-    results = results[0]
-    print(results)
-    return jsonify(results)
+    if os.getenv("PRJ_ENV") == "development":
+        results = open("res/"+hashtag, 'r')
+        results = results.read().splitlines()
+        results = results[0]
+        print(results)
+        return jsonify(results)
+    else:
+        results = fetchData(hashtag)
+        if results:
+            return jsonify(results)
+        else:
+            return "Error: Hashtag not registered or no data to fetch."
 
 
 @app.route('/joebiden', methods=['GET'])
