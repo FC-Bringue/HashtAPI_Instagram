@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 import flask
 from flask import request, jsonify
+from flask_cors import CORS
 
 from scrape_tool import create_scrape_job
 from postgre import savehashtagList, getHashtagList, findHashtag, fetchData, removeHashtag
@@ -13,6 +14,7 @@ load_dotenv()
 SCRAPE_LIST = []
 
 app = flask.Flask(__name__)
+CORS(app)
 
 if os.getenv("PRJ_ENV") == "development":
     app.config["DEBUG"] = True
@@ -37,10 +39,12 @@ def register():
 
     if 'bool' in request.args:
         bool = request.args['bool']
-    else:
-        return "Error: No id field provided. Please specify a bool."
 
     if os.getenv("PRJ_ENV") == "development":
+        if 'bool' in request.args:
+            pass
+        else:
+            return "Error: No id field provided. Please specify a bool."
         needToScrape = open(os.getenv("need_to_scrape_path") +
                             "/need_to_scrape_"+hashtag, 'w')
         needToScrape.write(bool)
